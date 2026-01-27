@@ -18,8 +18,12 @@ profile_canary_bookmarks_path = r'C:\Users\tool\AppData\Local\Google\Chrome SxS\
 plain_backup_root = r'C:\Users\tool\chrome_bookmarks_backup\bookmark-save\exports'
 commit_backup_folder = r'C:\Users\tool\chrome_bookmarks_backup\bookmark-save\commit-export+'
 
-# Create commit-export+ folder if it doesn't exist
+# Folder inside the website to update commit-ready files
+website_commit_folder = r'C:\Users\tool\chrome_bookmarks_backup\bookmark-save\bookmark_website\commit-export+'
+
+# Ensure folders exist
 os.makedirs(commit_backup_folder, exist_ok=True)
+os.makedirs(website_commit_folder, exist_ok=True)
 
 # ------------------------
 # Timestamp and date
@@ -43,8 +47,14 @@ def backup_bookmarks(profile_path, profile_name):
 
         # 2️⃣ Commit backup (overwrite/update file)
         commit_filename = f'{profile_name}.json'
-        shutil.copy(profile_path, os.path.join(commit_backup_folder, commit_filename))
+        commit_path = os.path.join(commit_backup_folder, commit_filename)
+        shutil.copy(profile_path, commit_path)
         print(f"Commit backup updated: {commit_filename} in {commit_backup_folder}")
+
+        # 3️⃣ Update website commit folder (overwrite)
+        website_path = os.path.join(website_commit_folder, commit_filename)
+        shutil.copy(profile_path, website_path)
+        print(f"Website commit backup updated: {commit_filename} in {website_commit_folder}")
     else:
         print(f"{profile_name} bookmarks file not found!")
 
