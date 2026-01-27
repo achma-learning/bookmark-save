@@ -21,7 +21,6 @@ def parse_bookmarks(bookmark_node):
             'url': bookmark_node.get('url')
         })
     return result if len(result) > 1 else result[0]  # flatten single-element folders
-        
 
 def load_bookmarks(filename):
     path = os.path.join(BOOKMARK_FOLDER, filename)
