@@ -6,10 +6,10 @@ from datetime import datetime
 chrome_bookmarks_path = r'C:\Users\tool\AppData\Local\Google\Chrome\User Data\Default\Bookmarks'
 chrome_canary_bookmarks_path = r'C:\Users\tool\AppData\Local\Google\Chrome SxS\User Data\Default\Bookmarks'
 
-# Define backup directory (C:\Users\tool\chrome_bookmarks_backup)
-backup_folder = r'C:\Users\tool\chrome_bookmarks_backup'
+# Define backup directory (C:\Users\tool\chrome_bookmarks_backup\bookmark-save)
+backup_folder = r'C:\Users\tool\chrome_bookmarks_backup\bookmark-save'
 
-# Create a unique backup directory based on the current date (inside backup folder)
+# Create a unique backup directory based on the current date (inside the bookmark-save folder)
 backup_dir = os.path.join(backup_folder, datetime.now().strftime('%Y-%m-%d'))
 os.makedirs(backup_dir, exist_ok=True)
 
