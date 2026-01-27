@@ -2,46 +2,56 @@ import shutil
 import os
 from datetime import datetime
 
-# Define paths to the Chrome profile bookmarks (use 'tool' as username)
+# ------------------------
+# Profile paths (update as needed)
+# ------------------------
 chrome_bookmarks_path = r'C:\Users\tool\AppData\Local\Google\Chrome\User Data\Default\Bookmarks'
 chrome_canary_bookmarks_path = r'C:\Users\tool\AppData\Local\Google\Chrome SxS\User Data\Default\Bookmarks'
 
-# Additional profile (example: "profile-chrome" and "profile-canary")
-profile_chrome_bookmarks_path = r'C:\Users\tool\AppData\Local\Google\Chrome\User Data\Profile 1\Bookmarks'  # Example for another profile
-profile_canary_bookmarks_path = r'C:\Users\tool\AppData\Local\Google\Chrome SxS\User Data\Profile 1\Bookmarks'  # Example for another Canary profile
+# Additional profiles (examples)
+profile_chrome_bookmarks_path = r'C:\Users\tool\AppData\Local\Google\Chrome\User Data\Profile 1\Bookmarks'
+profile_canary_bookmarks_path = r'C:\Users\tool\AppData\Local\Google\Chrome SxS\User Data\Profile 1\Bookmarks'
 
-# Define the backup folder (where the bookmarks will be saved)
-backup_folder = r'C:\Users\tool\chrome_bookmarks_backup\bookmark-save'
+# ------------------------
+# Backup folders
+# ------------------------
+plain_backup_root = r'C:\Users\tool\chrome_bookmarks_backup\bookmark-save\exports'
+commit_backup_folder = r'C:\Users\tool\chrome_bookmarks_backup\bookmark-save\commit-export+'
 
-# Create a unique backup directory based on the current date
-backup_dir = os.path.join(backup_folder, datetime.now().strftime('%Y-%m-%d'))
-os.makedirs(backup_dir, exist_ok=True)
+# Create commit-export+ folder if it doesn't exist
+os.makedirs(commit_backup_folder, exist_ok=True)
 
-# Define timestamp for unique file names
+# ------------------------
+# Timestamp and date
+# ------------------------
 timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+run_date = datetime.now().strftime('%d-%m-%Y')  # For plain backup folder name
 
-# Define backup file names based on the profiles and timestamp
-chrome_backup_filename = f'chrome_{timestamp}.json'
-chrome_canary_backup_filename = f'chrome_canary_{timestamp}.json'
-profile_chrome_backup_filename = f'profile-chrome_{timestamp}.json'
-profile_canary_backup_filename = f'profile-canary_{timestamp}.json'
+# Create a folder for this run inside exports
+plain_backup_folder = os.path.join(plain_backup_root, run_date)
+os.makedirs(plain_backup_folder, exist_ok=True)
 
-# Function to back up a profile's bookmarks if the file exists
-def backup_bookmarks(profile_path, backup_filename):
+# ------------------------
+# Function to back up bookmarks
+# ------------------------
+def backup_bookmarks(profile_path, profile_name):
     if os.path.exists(profile_path):
-        shutil.copy(profile_path, os.path.join(backup_dir, backup_filename))
-        print(f"Backup complete for {backup_filename}: {os.path.join(backup_dir, backup_filename)}")
+        # 1️⃣ Plain backup (unique folder per run)
+        plain_filename = f'{profile_name}_{timestamp}.json'
+        shutil.copy(profile_path, os.path.join(plain_backup_folder, plain_filename))
+        print(f"Plain backup complete: {plain_filename} in {plain_backup_folder}")
+
+        # 2️⃣ Commit backup (overwrite/update file)
+        commit_filename = f'{profile_name}.json'
+        shutil.copy(profile_path, os.path.join(commit_backup_folder, commit_filename))
+        print(f"Commit backup updated: {commit_filename} in {commit_backup_folder}")
     else:
-        print(f"{backup_filename} bookmarks file not found!")
+        print(f"{profile_name} bookmarks file not found!")
 
-# Back up Chrome bookmarks
-backup_bookmarks(chrome_bookmarks_path, chrome_backup_filename)
-
-# Back up Chrome Canary bookmarks
-backup_bookmarks(chrome_canary_bookmarks_path, chrome_canary_backup_filename)
-
-# Back up additional Chrome profile bookmarks (Profile 1 as an example)
-backup_bookmarks(profile_chrome_bookmarks_path, profile_chrome_backup_filename)
-
-# Back up additional Canary profile bookmarks (Profile 1 as an example)
-backup_bookmarks(profile_canary_bookmarks_path, profile_canary_backup_filename)
+# ------------------------
+# Backup all profiles
+# ------------------------
+backup_bookmarks(chrome_bookmarks_path, 'chrome')
+backup_bookmarks(chrome_canary_bookmarks_path, 'chrome_canary')
+backup_bookmarks(profile_chrome_bookmarks_path, 'profile-chrome')
+backup_bookmarks(profile_canary_bookmarks_path, 'profile-canary')

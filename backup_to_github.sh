@@ -1,24 +1,47 @@
 #!/bin/bash
 
-# Define the backup directory (C:\Users\tool\chrome_bookmarks_backup)
-BACKUP_DIR="C:/Users/tool/chrome_bookmarks_backup"
-REPO_DIR="C:/Users/tool/chrome_bookmarks_backup/bookmark-save"  # Correct path to the cloned GitHub repo
+# ------------------------
+# Paths
+# ------------------------
+# Local GitHub repository
+REPO_DIR="C:/Users/tool/chrome_bookmarks_backup/bookmark-save"
 
+# Folder containing the commit-ready backups
+COMMIT_BACKUP_DIR="$REPO_DIR/commit-export+"
 
-# Navigate to the Git repository
-cd $REPO_DIR
+# ------------------------
+# Navigate to GitHub repository
+# ------------------------
+cd "$REPO_DIR" || { echo "Repo directory not found!"; exit 1; }
 
-# Pull the latest changes from GitHub
+# ------------------------
+# Pull latest changes to avoid conflicts
+# ------------------------
 git pull origin main
 
-# Copy the backup files from the backup directory to the repo directory
-cp $BACKUP_DIR/* $REPO_DIR/
+# ------------------------
+# Copy commit-ready bookmarks into repo folder (overwrite existing)
+# ------------------------
+cp -r "$COMMIT_BACKUP_DIR"/* "$REPO_DIR"/
 
-# Add and commit changes
+# ------------------------
+# Stage changes
+# ------------------------
 git add .
-git commit -m "Backup Chrome and Chrome Canary Bookmarks: $(date +'%Y-%m-%d %H:%M:%S')"
 
-# Push the changes to GitHub
+# ------------------------
+# Commit changes if there are any
+# ------------------------
+if git diff-index --quiet HEAD --; then
+    echo "No changes to commit."
+else
+    TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+    git commit -m "Update commit-export+ bookmarks: $TIMESTAMP"
+    echo "Committed changes."
+fi
+
+# ------------------------
+# Push to GitHub
+# ------------------------
 git push origin main
-
-echo "Backup uploaded to GitHub."
+echo "Push complete."
