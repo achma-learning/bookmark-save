@@ -2,12 +2,13 @@ bookmark_website/
 │
 ├─ commit-export+/
 │   ├─ chrome.json
-│   ├─ chrome_canary.json
-│   ├─ profile-chrome.json
-│   └─ profile-canary.json
+│   └─ ... other profiles ...
 │
 ├─ app.py
+├─ run_bookmark_website.py   (optional launcher)
 ├─ templates/
-│   └─ index.html
+│   ├─ index.html
+│   └─ bookmark_item.html   <-- THIS IS IMPORTANT
 └─ static/
-    └─ style.css
+    ├─ style.css
+    └─ script.js
