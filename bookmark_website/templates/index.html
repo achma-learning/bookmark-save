@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamic Bookmark Viewer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Dynamic Bookmark Viewer</h1>
+
+    {% for row in bookmarks_rows %}
+    <div class="bookmark-row">
+        {% for bookmark in row %}
+        <div class="bookmark-item">
+            <a href="{{ bookmark.url }}" target="_blank">{{ bookmark.name }}</a>
+            <button onclick="copyToClipboard('{{ bookmark.url }}')">Copy URL</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+    <script>
+    function copyToClipboard(url) {
+        navigator.clipboard.writeText(url).then(function() {
+            alert("Copied URL: " + url);
+        }, function(err) {
+            console.error('Could not copy: ', err);
+        });
+    }
+
+    // Auto-refresh every 30 seconds
+    setInterval(() => {
+        location.reload();
+    }, 30000);
+    </script>
+</body>
+</html>

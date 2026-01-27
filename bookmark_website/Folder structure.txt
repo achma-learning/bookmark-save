@@ -1,0 +1,13 @@
+bookmark_website/
+│
+├─ commit-export+/
+│   ├─ chrome.json
+│   ├─ chrome_canary.json
+│   ├─ profile-chrome.json
+│   └─ profile-canary.json
+│
+├─ app.py
+├─ templates/
+│   └─ index.html
+└─ static/
+    └─ style.css
