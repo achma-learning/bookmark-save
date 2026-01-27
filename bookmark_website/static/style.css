@@ -1,33 +1,9 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-}
-
-h1 {
-    text-align: center;
-}
-
-.bookmark-row {
-    display: flex;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: #f0f0f0;
-}
-
-.bookmark-item {
-    margin-right: 15px;
-    margin-bottom: 10px;
-}
-
-.bookmark-item a {
-    text-decoration: none;
-    color: #0077cc;
-    margin-right: 5px;
-}
-
-.bookmark-item button {
-    padding: 2px 6px;
-    font-size: 12px;
-    cursor: pointer;
-}
+body { font-family: Arial, sans-serif; padding: 20px; }
+h1 { text-align: center; }
+.profile-row { margin-bottom: 30px; }
+.bookmark-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.bookmark-item, .bookmark-folder { background: #f0f0f0; padding: 5px 10px; border-radius: 4px; display: flex; align-items: center; cursor: pointer; }
+.bookmark-item i, .bookmark-folder i { margin-right: 5px; }
+.folder-contents { display: none; margin-left: 20px; flex-direction: column; }
+.bookmark-folder:hover .folder-contents { display: flex; }
+.bookmark-item button { margin-left: 5px; font-size: 12px; }

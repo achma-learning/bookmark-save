@@ -1,42 +1,49 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template
 import json
 import os
 
 app = Flask(__name__)
 
-# Path to commit-ready exported bookmarks
 BOOKMARK_FOLDER = os.path.join(os.getcwd(), 'commit-export+')
 
-# Function to read bookmarks from a JSON file
+# Recursive function to parse bookmarks and preserve folders
+def parse_bookmarks(bookmark_node):
+    result = []
+    if bookmark_node.get('type') == 'folder':
+        folder = {
+            'name': bookmark_node.get('name', 'Folder'),
+            'children': [parse_bookmarks(child) for child in bookmark_node.get('children', [])]
+        }
+        result.append(folder)
+    elif bookmark_node.get('type') == 'url':
+        result.append({
+            'name': bookmark_node.get('name', 'Unnamed'),
+            'url': bookmark_node.get('url')
+        })
+    return result if len(result) > 1 else result[0]  # flatten single-element folders
+        
+
 def load_bookmarks(filename):
     path = os.path.join(BOOKMARK_FOLDER, filename)
     if not os.path.exists(path):
         return []
     with open(path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    # Chrome bookmarks are nested; we need "roots" -> "bookmark_bar" -> "children"
-    try:
-        children = data['roots']['bookmark_bar']['children']
-    except KeyError:
-        children = []
+    children = data.get('roots', {}).get('bookmark_bar', {}).get('children', [])
     bookmarks = []
-    for item in children:
-        if item.get('type') == 'url':
-            bookmarks.append({
-                'name': item['name'],
-                'url': item['url']
-            })
+    for child in children:
+        bookmarks.append(parse_bookmarks(child))
     return bookmarks
 
 @app.route('/')
 def index():
-    # Load all bookmark profiles
-    chrome = load_bookmarks('chrome.json')
-    chrome_canary = load_bookmarks('chrome_canary.json')
-    profile_chrome = load_bookmarks('profile-chrome.json')
-    profile_canary = load_bookmarks('profile-canary.json')
-    return render_template('index.html', 
-                           bookmarks_rows=[chrome, chrome_canary, profile_chrome, profile_canary])
+    # Automatically load all JSON files in commit-export+
+    bookmark_files = [f for f in os.listdir(BOOKMARK_FOLDER) if f.endswith('.json')]
+    all_bookmarks = {}
+    for file in bookmark_files:
+        profile_name = file.replace('.json', '')
+        all_bookmarks[profile_name] = load_bookmarks(file)
+    return render_template('index.html', all_bookmarks=all_bookmarks)
 
 if __name__ == '__main__':
     app.run(debug=True)

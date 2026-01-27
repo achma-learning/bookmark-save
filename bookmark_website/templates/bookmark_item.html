@@ -1,0 +1,17 @@
+{% if item.get('url') %}
+<div class="bookmark-item" draggable="true" ondragstart="drag(event)" data-url="{{ item.url }}">
+    <i class="fas fa-bookmark"></i>
+    <a href="{{ item.url }}" target="_blank">{{ item.name }}</a>
+    <button onclick="copyToClipboard('{{ item.url }}')">Copy URL</button>
+</div>
+{% elif item.get('children') %}
+<div class="bookmark-folder">
+    <i class="fas fa-folder"></i>
+    <span>{{ item.name }}</span>
+    <div class="folder-contents">
+        {% for child in item.children %}
+            {% include 'bookmark_item.html' with context %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
